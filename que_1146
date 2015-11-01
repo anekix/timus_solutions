@@ -1,0 +1,106 @@
+//inspiration:https://www.youtube.com/watch?v=yCQN096CwWM&feature=youtu.be
+#include<iostream> 
+#include<limits.h>
+#include<cstring>
+#include <stdlib.h>
+using namespace std;
+
+//we pass max_start and max_end by refrence to kadane()
+//so that its value remains same in main function and no 
+//copy of those variables are made
+int kadane(int *a, int *max_start, int *max_end, int n){
+int max_so_far=0;
+int max_ending_here=0;
+int max_element=INT_MIN;// to find min element if all negative nmbers
+int flag=true; // to check if all numbers are negative 
+//indices where maximum sum subarray starts and ends!
+int i=0;
+int j=0;
+int current_start=0;
+
+for( int i=0;i<n;i++){
+max_ending_here = max_ending_here + a[i];
+if(a[i]>0) flag=false;//check if there exists any positive number:if so flip flag;;
+if(a[i]>max_element){
+       	max_element = a[i];
+}
+if(max_ending_here < 0){
+       	max_ending_here=0;
+	current_start = i+1;
+}
+if( max_so_far < max_ending_here){
+	max_so_far = max_ending_here;
+	*max_start = current_start;
+        *max_end = i;
+
+}
+}
+int max_sum;
+if( flag == false) max_sum= max_so_far;
+else max_sum= max_element;
+return max_sum;
+}
+// The main function that finds maximum sum rectangle in M[][]
+void findMaxSum(int M[][102],int *n)
+{
+    // Variables to store the final output
+    int maxSum = INT_MIN, finalLeft, finalRight, finalTop, finalBottom;
+ 
+    int left, right, i;
+    int temp[*n], sum, start, finish;
+ 
+    // Set the left column
+    for (left = 0; left < *n; ++left)
+    {
+        // Initialize all elements of temp as 0
+        memset(temp, 0, sizeof(temp));
+ 
+        // Set the right column for the left column set by outer loop
+        for (right = left; right < *n; ++right)
+        {
+            // Calculate sum between current left and right for every row 'i'
+            for (i = 0; i < *n; ++i)
+                temp[i] += M[i][right];
+ 
+            // Find the maximum sum subarray in temp[]. The kadane() function
+            // also sets values of start and finish.  So 'sum' is sum of
+            // rectangle between (start, left) and (finish, right) which is the
+            //  maximum sum with boundary columns strictly as left and right.
+            sum = kadane(temp, &start, &finish, *n);
+ 
+            // Compare sum with maximum sum so far. If sum is more, then update
+            // maxSum and other output values
+            if (sum > maxSum)
+            {
+                maxSum = sum;
+                finalLeft = left;
+                finalRight = right;
+                finalTop = start;
+                finalBottom = finish;
+            }
+        }
+    }
+ 
+   /* // Print final values
+    cout<<"top finalTop, finalLeft);
+    printf("(Bottom, Right) (%d, %d)\n", finalBottom, finalRight);
+    printf("Max sum is: %d\n", maxSum);*/
+    cout<<maxSum;
+}
+int main(){
+int max_start,max_end;
+int M[102][102];
+int n;
+cin>>n;
+for( int i =0;i<n;i++){
+for( int j =0;j<n;j++){
+cin>>M[i][j];
+
+}
+}
+
+findMaxSum(M,&n);
+ 
+    return 0;
+}
+
